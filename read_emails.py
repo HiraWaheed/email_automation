@@ -30,8 +30,9 @@ def read_message(service, message):
     except Exception as e:
         print(e)
 
-# get the Gmail API service
-service = auth.gmail_authenticate()
-msgs = search_messages(service,"Sample search text")
-for msg_id in msgs:
-    read_message(service,msg_id)
+def read_email(search_text):
+    # get the Gmail API service
+    service = auth.gmail_authenticate()
+    msgs = search_messages(service,search_text)
+    for msg_id in msgs:
+        read_message(service,msg_id)

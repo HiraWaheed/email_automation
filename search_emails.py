@@ -16,6 +16,9 @@ def search_messages(service, query):
         print(e)
 
 
-# get the Gmail API service
-service = auth.gmail_authenticate()
-search_messages(service,"Example search query here")
+def search_email(search_text):
+    # get the Gmail API service
+    service = auth.gmail_authenticate()
+    search_messages(service,search_text)
+
+

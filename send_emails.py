@@ -71,8 +71,9 @@ def send_message(service, destination, obj, body, attachments=[]):
     except Exception as e:
         print(e)
 
-# get the Gmail API service
-service = auth.gmail_authenticate()
+def send_email(subject,body,recipient):
+    # get the Gmail API service
+    service = auth.gmail_authenticate()
 
-receiver_email = "example@gmail.com"
-send_message(service, receiver_email, "Example email subject", "Example email body")
+    send_message(service, recipient,subject, body)
+
