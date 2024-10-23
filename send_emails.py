@@ -1,5 +1,6 @@
 
 import os
+import logging
 from utils import auth
 from dotenv import load_dotenv
 from base64 import urlsafe_b64decode, urlsafe_b64encode
@@ -15,6 +16,16 @@ sender_email = os.getenv("SENDER_EMAIL")
 
 # Adds the attachment with the given filename to the given message
 def add_attachment(message, filename):
+    """
+    Adds the specified file as an attachment to the given message.
+
+    Parameters:
+    message (MIMEMultipart): The message object to which the attachment will be added.
+    filename (str): The path to the file to be attached.
+
+    Returns:
+    None
+    """
     try:
         content_type, encoding = guess_mime_type(filename)
         if content_type is None or encoding is not None:
@@ -41,9 +52,21 @@ def add_attachment(message, filename):
         msg.add_header('Content-Disposition', 'attachment', filename=filename)
         message.attach(msg)
     except Exception as e:
-            print(e)
+            logging.error("Error occured in add_attachment:", e)
 
 def build_message(destination, obj, body, attachments=[]):
+    """
+    Builds an email message, either plain text or with attachments.
+
+    Parameters:
+    destination (str): The recipient's email address.
+    obj (str): The subject of the email.
+    body (str): The body of the email message.
+    attachments (list): A list of file paths to be attached to the email (optional).
+
+    Returns:
+    dict: A dictionary containing the raw base64-encoded email.
+    """
     try:
         if not attachments: # no attachments given
             message = MIMEText(body)
@@ -60,20 +83,47 @@ def build_message(destination, obj, body, attachments=[]):
                 add_attachment(message, filename)
         return {'raw': urlsafe_b64encode(message.as_bytes()).decode()}
     except Exception as e:
-        print(e)
+        logging.error("Error occured in build_message:", e)
 
 def send_message(service, destination, obj, body, attachments=[]):
+    """
+    Sends an email message using the Gmail API.
+
+    Parameters:
+    service (obj): The Gmail API service object.
+    destination (str): The recipient's email address.
+    obj (str): The subject of the email.
+    body (str): The body of the email.
+    attachments (list): A list of file paths to be attached to the email (optional).
+
+    Returns:
+    dict: The Gmail API response after the email is sent.
+    """
     try:
         return service.users().messages().send(
         userId="me",
         body=build_message(destination, obj, body, attachments)
         ).execute()
     except Exception as e:
-        print(e)
+        logging.error("Error occured in send_message:", e)
 
 def send_email(subject,body,recipient):
-    # get the Gmail API service
-    service = auth.gmail_authenticate()
+    """
+    Authenticates with Gmail and sends an email.
 
-    send_message(service, recipient,subject, body)
+    Parameters:
+    subject (str): The subject of the email.
+    body (str): The body of the email message.
+    recipient (str): The recipient's email address.
+
+    Returns:
+    None
+    """
+    try:
+        # get the Gmail API service
+        service = auth.gmail_authenticate()
+
+        send_message(service, recipient,subject, body)
+    except Exception as e:
+        logging.error("Error occured in send_email:", e)
 
