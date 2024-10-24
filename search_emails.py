@@ -24,7 +24,7 @@ def search_messages(service, query):
                 messages.extend(result['messages'])
         return messages
     except Exception as e:
-        logging.error("Error occured in search_messages:", e)
+        logging.error(f"Error occured in search_messages:{e}")
 
 
 def search_email(search_text):
@@ -38,10 +38,13 @@ def search_email(search_text):
     None
     """
     try:
+        if len(search_text) == 0:
+            raise Exception("No search text given")
         # get the Gmail API service
-        service = auth.gmail_authenticate()
-        search_messages(service,search_text)
+        service = auth.gmail_authenticate() 
+        search_results = search_messages(service,search_text)
+        return "Nothing matched the search text" if search_results == [] else search_results
     except Exception as e:
-        logging.error("Error occured in search_email:", e)
+        logging.error(f"Error occured in search_email:{e}")
 
 

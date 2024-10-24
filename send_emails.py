@@ -52,7 +52,7 @@ def add_attachment(message, filename):
         msg.add_header('Content-Disposition', 'attachment', filename=filename)
         message.attach(msg)
     except Exception as e:
-            logging.error("Error occured in add_attachment:", e)
+            logging.error(f"Error occured in add_attachment:{e}")
 
 def build_message(destination, obj, body, attachments=[]):
     """
@@ -83,7 +83,7 @@ def build_message(destination, obj, body, attachments=[]):
                 add_attachment(message, filename)
         return {'raw': urlsafe_b64encode(message.as_bytes()).decode()}
     except Exception as e:
-        logging.error("Error occured in build_message:", e)
+        logging.error(f"Error occured in build_message:{e}")
 
 def send_message(service, destination, obj, body, attachments=[]):
     """
@@ -105,7 +105,7 @@ def send_message(service, destination, obj, body, attachments=[]):
         body=build_message(destination, obj, body, attachments)
         ).execute()
     except Exception as e:
-        logging.error("Error occured in send_message:", e)
+        logging.error(f"Error occured in send_message:{e}")
 
 def send_email(recipient,subject,body):
     """
@@ -125,5 +125,5 @@ def send_email(recipient,subject,body):
 
         send_message(service, recipient,subject, body)
     except Exception as e:
-        logging.error("Error occured in send_email:", e)
+        logging.error(f"Error occured in send_email:{e}")
 

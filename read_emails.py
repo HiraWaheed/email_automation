@@ -39,7 +39,7 @@ def read_message(service, message):
                             text = urlsafe_b64decode(data).decode()
                             print("Body: ",text)
     except Exception as e:
-        logging.error("Error occured in read_message:", e)
+        logging.error(f"Error occured in read_message:{e}")
 
 def read_email(search_text):
     """
@@ -58,4 +58,4 @@ def read_email(search_text):
         for msg_id in msgs:
             read_message(service,msg_id)
     except Exception as e:
-        logging.error("Error occured in read_email:", e)
+        logging.error(f"Error occured in read_email:{e}")
