@@ -107,7 +107,7 @@ def send_message(service, destination, obj, body, attachments=[]):
     except Exception as e:
         logging.error("Error occured in send_message:", e)
 
-def send_email(subject,body,recipient):
+def send_email(recipient,subject,body):
     """
     Authenticates with Gmail and sends an email.
 
