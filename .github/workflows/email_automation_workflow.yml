@@ -17,7 +17,7 @@ jobs:
       - name: Linting
         run: |
           black .
-      - name: Linting
+      - name: Testing
         run: |
           pytest tests .
       - run: echo "🍏 This job's status is ${{ job.status }}."
