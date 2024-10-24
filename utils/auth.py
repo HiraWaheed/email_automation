@@ -1,10 +1,11 @@
 import os
 import pickle
+
 # Gmail API utils
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-from constants import SCOPES,CREDS_FILE
+from constants import SCOPES, CREDS_FILE
 
 
 def gmail_authenticate():
@@ -24,4 +25,4 @@ def gmail_authenticate():
         # save the credentials for the next run
         with open("token.pickle", "wb") as token:
             pickle.dump(creds, token)
-    return build('gmail', 'v1', credentials=creds)
+    return build("gmail", "v1", credentials=creds)

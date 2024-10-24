@@ -3,6 +3,7 @@ from utils import auth
 from search_emails import search_messages
 from base64 import urlsafe_b64decode
 
+
 def read_message(service, message):
     """
     Retrieves and prints details (To, Subject, Date, and Body) of a specific email message.
@@ -15,8 +16,13 @@ def read_message(service, message):
     None
     """
     try:
-        msg = service.users().messages().get(userId='me', id=message['id'], format='full').execute()
-        payload = msg['payload']
+        msg = (
+            service.users()
+            .messages()
+            .get(userId="me", id=message["id"], format="full")
+            .execute()
+        )
+        payload = msg["payload"]
         headers = payload.get("headers")
         parts = payload.get("parts")
         if headers:
@@ -30,16 +36,17 @@ def read_message(service, message):
                 if name.lower() == "date":
                     print("Date:", value)
         if parts:
-            for part in parts: 
+            for part in parts:
                 mimeType = part.get("mimeType")
                 body = part.get("body")
                 data = body.get("data")
                 if mimeType == "text/plain":
-                        if data:
-                            text = urlsafe_b64decode(data).decode()
-                            print("Body: ",text)
+                    if data:
+                        text = urlsafe_b64decode(data).decode()
+                        print("Body: ", text)
     except Exception as e:
         logging.error(f"Error occured in read_message:{e}")
+
 
 def read_email(search_text):
     """
@@ -54,8 +61,8 @@ def read_email(search_text):
     try:
         # get the Gmail API service
         service = auth.gmail_authenticate()
-        msgs = search_messages(service,search_text)
+        msgs = search_messages(service, search_text)
         for msg_id in msgs:
-            read_message(service,msg_id)
+            read_message(service, msg_id)
     except Exception as e:
         logging.error(f"Error occured in read_email:{e}")

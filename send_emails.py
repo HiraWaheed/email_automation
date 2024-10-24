@@ -1,4 +1,3 @@
-
 import os
 import logging
 from utils import auth
@@ -13,6 +12,7 @@ from mimetypes import guess_type as guess_mime_type
 
 load_dotenv()
 sender_email = os.getenv("SENDER_EMAIL")
+
 
 # Adds the attachment with the given filename to the given message
 def add_attachment(message, filename):
@@ -29,30 +29,31 @@ def add_attachment(message, filename):
     try:
         content_type, encoding = guess_mime_type(filename)
         if content_type is None or encoding is not None:
-            content_type = 'application/octet-stream'
-        main_type, sub_type = content_type.split('/', 1)
-        if main_type == 'text':
-            fp = open(filename, 'rb')
+            content_type = "application/octet-stream"
+        main_type, sub_type = content_type.split("/", 1)
+        if main_type == "text":
+            fp = open(filename, "rb")
             msg = MIMEText(fp.read().decode(), _subtype=sub_type)
             fp.close()
-        elif main_type == 'image':
-            fp = open(filename, 'rb')
+        elif main_type == "image":
+            fp = open(filename, "rb")
             msg = MIMEImage(fp.read(), _subtype=sub_type)
             fp.close()
-        elif main_type == 'audio':
-            fp = open(filename, 'rb')
+        elif main_type == "audio":
+            fp = open(filename, "rb")
             msg = MIMEAudio(fp.read(), _subtype=sub_type)
             fp.close()
         else:
-            fp = open(filename, 'rb')
+            fp = open(filename, "rb")
             msg = MIMEBase(main_type, sub_type)
             msg.set_payload(fp.read())
             fp.close()
         filename = os.path.basename(filename)
-        msg.add_header('Content-Disposition', 'attachment', filename=filename)
+        msg.add_header("Content-Disposition", "attachment", filename=filename)
         message.attach(msg)
     except Exception as e:
-            logging.error(f"Error occured in add_attachment:{e}")
+        logging.error(f"Error occured in add_attachment:{e}")
+
 
 def build_message(destination, obj, body, attachments=[]):
     """
@@ -68,22 +69,23 @@ def build_message(destination, obj, body, attachments=[]):
     dict: A dictionary containing the raw base64-encoded email.
     """
     try:
-        if not attachments: # no attachments given
+        if not attachments:  # no attachments given
             message = MIMEText(body)
-            message['to'] = destination
-            message['from'] = sender_email
-            message['subject'] = obj
+            message["to"] = destination
+            message["from"] = sender_email
+            message["subject"] = obj
         else:
             message = MIMEMultipart()
-            message['to'] = destination
-            message['from'] = sender_email
-            message['subject'] = obj
+            message["to"] = destination
+            message["from"] = sender_email
+            message["subject"] = obj
             message.attach(MIMEText(body))
             for filename in attachments:
                 add_attachment(message, filename)
-        return {'raw': urlsafe_b64encode(message.as_bytes()).decode()}
+        return {"raw": urlsafe_b64encode(message.as_bytes()).decode()}
     except Exception as e:
         logging.error(f"Error occured in build_message:{e}")
+
 
 def send_message(service, destination, obj, body, attachments=[]):
     """
@@ -100,14 +102,17 @@ def send_message(service, destination, obj, body, attachments=[]):
     dict: The Gmail API response after the email is sent.
     """
     try:
-        return service.users().messages().send(
-        userId="me",
-        body=build_message(destination, obj, body, attachments)
-        ).execute()
+        return (
+            service.users()
+            .messages()
+            .send(userId="me", body=build_message(destination, obj, body, attachments))
+            .execute()
+        )
     except Exception as e:
         logging.error(f"Error occured in send_message:{e}")
 
-def send_email(recipient,subject,body):
+
+def send_email(recipient, subject, body):
     """
     Authenticates with Gmail and sends an email.
 
@@ -123,7 +128,6 @@ def send_email(recipient,subject,body):
         # get the Gmail API service
         service = auth.gmail_authenticate()
 
-        send_message(service, recipient,subject, body)
+        send_message(service, recipient, subject, body)
     except Exception as e:
         logging.error(f"Error occured in send_email:{e}")
-

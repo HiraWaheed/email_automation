@@ -1,2 +1,2 @@
-SCOPES = ['https://mail.google.com/']
-CREDS_FILE = 'credentials.json'
+SCOPES = ["https://mail.google.com/"]
+CREDS_FILE = "credentials.json"
