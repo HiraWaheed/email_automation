@@ -15,4 +15,7 @@ jobs:
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
+      - name: Linting
+        run: |
+          black .
       - run: echo "🍏 This job's status is ${{ job.status }}."
