@@ -37,5 +37,5 @@ def test_search_email_no_match(mock_search_messages, mock_gmail_authenticate):
 
     result = search_email("some search text")
 
-    assert result == "Nothing matched the "
+    assert result == "Nothing matched the search text"
     mock_search_messages.assert_called_once()
